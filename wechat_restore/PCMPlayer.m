@@ -30,7 +30,7 @@ static SKP_int32 rand_seed = 1;
 #define QUEUE_BUFFER_SIZE 3      //队列缓冲个数
 
 //一次播放的buffer的长度
-#define PLAY_SIZE                (1024*sizeof(SKP_int16))
+#define PLAY_SIZE                (2048*sizeof(SKP_int16))
 
 //播放的缓冲区
 char *play_buffer = NULL;
