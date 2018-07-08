@@ -23,9 +23,9 @@
 @interface ContatctViewController ()
 
 @property (weak) IBOutlet NSTextField *pathTextField;
-@property (weak) IBOutlet NSTableView *contactTableView;
+@property (weak) IBOutlet NSTableView *tableView;
 
-@property (nonatomic,retain) NSMutableArray *contactDataArray;
+@property (nonatomic,retain) NSMutableArray *dataArray;
 @property (nonatomic,retain) PCMPlayer *player;
 @property (nonatomic,retain) NSMutableArray *fileArray;
 
@@ -97,7 +97,7 @@
 
 -(void)readChatRecord{
     
-    [self.contactDataArray removeAllObjects];
+    [self.dataArray removeAllObjects];
     
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
@@ -121,13 +121,13 @@
                 NSString *user_name = [NSString stringWithFormat:@"%@",user_name_id];
                 if ([[NSString MD5_Lower:user_name] isEqualToString:[table_name componentsSeparatedByString:@"_"][1]]) {
                     [contact_result removeObjectAtIndex:j];
-                    [_contactDataArray addObject:user_name];
+                    [_dataArray addObject:user_name];
                 }
             }
         }
         
     }
-    [self.contactTableView reloadData];
+    [self.tableView reloadData];
 }
 
 
@@ -151,13 +151,13 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     NSLog(@"%@",[NSString MD5_Lower:@"wxid_8baaf23wanms22"]);
-    self.contactTableView.usesAlternatingRowBackgroundColors = YES; //背景颜色的交替，一行白色，一行灰色。设置后，原来设置的 backgroundColor 就无效了。
+    self.tableView.usesAlternatingRowBackgroundColors = YES; //背景颜色的交替，一行白色，一行灰色。设置后，原来设置的 backgroundColor 就无效了。
 }
 
 -(NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
     
     
-    return self.contactDataArray.count;
+    return self.dataArray.count;
 }
 #pragma mark - 行高
 -(CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row{
@@ -172,7 +172,7 @@
         cell.identifier = strIdt;
     }
     cell.wantsLayer = YES;
-    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.contactDataArray[row]];
+    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.dataArray[row]];
     return cell;
 }
 //选中的响应
@@ -181,7 +181,7 @@
     
     
     if ([self.delegate respondsToSelector:@selector(refreshTableView:)]) {
-        [self.delegate performSelector:@selector(refreshTableView:) withObject:self.contactDataArray[table.selectedRow]];
+        [self.delegate performSelector:@selector(refreshTableView:) withObject:self.dataArray[table.selectedRow]];
     }
 }
 
@@ -190,7 +190,7 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         _fileArray = [[NSMutableArray alloc] init];
         _player = [[PCMPlayer alloc] init];
-        _contactDataArray = [[NSMutableArray alloc] init];
+        _dataArray = [[NSMutableArray alloc] init];
     }
     return self;
 }
@@ -200,7 +200,7 @@
     if (self = [super initWithCoder:coder   ]) {
         _player = [[PCMPlayer alloc] init];
         _fileArray = [[NSMutableArray alloc] init];
-        _contactDataArray = [[NSMutableArray alloc] init];
+        _dataArray = [[NSMutableArray alloc] init];
         
     }
     return self;

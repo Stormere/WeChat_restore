@@ -18,9 +18,9 @@
 #define WCDB_CONTACT_SQILTE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/WCDB_Contact.sqlite"
 
 @interface RecordViewController () <ContactDelegate>
-@property (weak) IBOutlet NSTableView *recordTableView;
+@property (weak) IBOutlet NSTableView *tableView;
 
-@property (nonatomic,retain) NSMutableArray *recordDataArray;
+@property (nonatomic,retain) NSMutableArray *dataArray;
 
 @end
 
@@ -28,11 +28,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    self.recordTableView.usesAlternatingRowBackgroundColors = YES; //背景颜色的交替，一行白色，一行灰色。设置后，原来设置的 backgroundColor 就无效了。
+    self.tableView.usesAlternatingRowBackgroundColors = YES; //背景颜色的交替，一行白色，一行灰色。设置后，原来设置的 backgroundColor 就无效了。
 }
 
 -(NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
-    return self.recordDataArray.count;
+    return self.dataArray.count;
 }
 #pragma mark - 行高
 -(CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row{
@@ -47,14 +47,14 @@
         cell.identifier = strIdt;
     }
     cell.wantsLayer = YES;
-    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.recordDataArray[row]];
+    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.dataArray[row]];
     return cell;
 }
 
 
 
 - (void)refreshTableView:(NSString *)wxid {
-    [self.recordDataArray removeAllObjects];
+    [self.dataArray removeAllObjects];
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
     NSString *sql =[NSString stringWithFormat:@"select MesLocalID,Message,Des from Chat_%@",[NSString MD5_Lower:wxid]] ;
     NSMutableArray *result = [[DBManager sharedInstance] execQuery:[sql UTF8String] className:"MessageModel" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
@@ -63,9 +63,9 @@
         Ivar ivar_message_name = class_getInstanceVariable(messageModel, "Message");
         id  message_name_id =  object_getIvar(result[i], ivar_message_name);
         NSString *message = [NSString stringWithFormat:@"%@",message_name_id];
-        [self.recordDataArray addObject:message];
+        [self.dataArray addObject:message];
     }
-    [self.recordTableView reloadData];
+    [self.tableView reloadData];
 }
 
 - (void)encodeWithCoder:(nonnull NSCoder *)aCoder {
@@ -75,7 +75,7 @@
 
 -(instancetype)initWithNibName:(NSNibName)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
-        _recordDataArray = [[NSMutableArray alloc] init];
+        _dataArray = [[NSMutableArray alloc] init];
       
     }
     return self;
@@ -84,7 +84,7 @@
 
 -(id)initWithCoder:(NSCoder *)coder {
     if (self = [super initWithCoder:coder   ]) {
-        _recordDataArray = [[NSMutableArray alloc] init];
+        _dataArray = [[NSMutableArray alloc] init];
     }
     return self;
 }

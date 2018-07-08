@@ -15,9 +15,9 @@
 
 using namespace std;
 
-static  vector<SqliteModel *> sqlites(10);
+static  vector<SqliteModel *> dbArray(10);
 
-dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的信号量
+dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
 
 @interface DBManager()
 
@@ -49,18 +49,18 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的
 -(void)initPath:(const char *)path {
     
     dispatch_semaphore_wait(event,DISPATCH_TIME_FOREVER);
-    for (int i=0; i<sqlites.size(); i++) {
+    for (int i=0; i<dbArray.size(); i++) {
         
-        if (sqlites[i] != nil) {
-            if (strcmp(path, sqlites[i]->path) == 0) {
+        if (dbArray[i] != nil) {
+            if (strcmp(path, dbArray[i]->path) == 0) {
                 break;
             }
         } else {
-            sqlites[i] = (SqliteModel *)malloc(sizeof(SqliteModel));
+            dbArray[i] = (SqliteModel *)malloc(sizeof(SqliteModel));
             
-            sqlites[i]->path = (char *)malloc(strlen(path));
-            memcpy(sqlites[i]->path, path, strlen(path));
-            int result = sqlite3_open(path, &(sqlites[i]->db));
+            dbArray[i]->path = (char *)malloc(strlen(path));
+            memcpy(dbArray[i]->path, path, strlen(path));
+            int result = sqlite3_open(path, &(dbArray[i]->db));
             if (result == SQLITE_OK) {
                 NSLog(@"成功打开数据库.");
             } else {
@@ -76,15 +76,15 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的
 }
 
 -(void)dealloc {
-    for (int i=0; i<sqlites.size(); i++) {
-        if (sqlites[i] -> db != nil) {
-            int result = sqlite3_close(sqlites[i] -> db);
+    for (int i=0; i<dbArray.size(); i++) {
+        if (dbArray[i] -> db != nil) {
+            int result = sqlite3_close(dbArray[i] -> db);
             if (result == SQLITE_OK) {
                 NSLog(@"成功关闭数据库.");
             } else {
                 NSLog(@"%s",sqlite3_errstr(result)) ;
             }
-            sqlites[i] -> db = nil;
+            dbArray[i] -> db = nil;
         }
     }
 }
@@ -93,10 +93,12 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的
 -(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className dbPath:(const char *)path{
     
     sqlite3 *_db = nil;
-    for (int i=0; i<sqlites.size(); i++) {
-        if (strcmp(path, sqlites[i] -> path) == 0 ) {
-            _db = sqlites[i]->db;
-            break;
+    for (int i=0; i<dbArray.size(); i++) {
+        if (dbArray[i] != nil) {
+            if (strcmp(path, dbArray[i] -> path) == 0 ) {
+                _db = dbArray[i]->db;
+                break;
+            }
         }
     }
     
@@ -210,16 +212,8 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的
                         case SQLITE_TEXT:
                         {
                             Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
-                            
-//                            char *buffer = (char *)malloc(sqlite3_column_bytes(stmt, i));
-//
-//                            sprintf(buffer, "%s",sqlite3_column_text(stmt,i));
-                            
                             if (strcmp("MessageModel", className)== 0 && strcmp("Message", sqlite3_column_name(stmt,i) ) == 0) {
-                                
-                                printf("00000000000000%s\n",sqlite3_column_text(stmt,i));
                                 NSLog(@"%@",[NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
-
                             }
                             object_setIvar(instance, ivar, [NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
                         }

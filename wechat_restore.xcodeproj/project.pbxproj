@@ -15,7 +15,6 @@
 		D1F0882120EBC483006CD4E7 /* DBManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F0882020EBC483006CD4E7 /* DBManager.mm */; };
 		D1F0882420EBC4A5006CD4E7 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D1F0882320EBC4A5006CD4E7 /* libsqlite3.0.tbd */; };
 		D1F5E2A420E3CBCF002394DE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */; };
-		D1F5E2A720E3CBCF002394DE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2A620E3CBCF002394DE /* ViewController.m */; };
 		D1F5E2A920E3CBD0002394DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1F5E2A820E3CBD0002394DE /* Assets.xcassets */; };
 		D1F5E2AC20E3CBD0002394DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1F5E2AA20E3CBD0002394DE /* Main.storyboard */; };
 		D1F5E2AF20E3CBD0002394DE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2AE20E3CBD0002394DE /* main.m */; };
@@ -173,8 +172,6 @@
 		D1F5E29F20E3CBCF002394DE /* wechat_restore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wechat_restore.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1F5E2A220E3CBCF002394DE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
-		D1F5E2A520E3CBCF002394DE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		D1F5E2A620E3CBCF002394DE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		D1F5E2A820E3CBD0002394DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D1F5E2AB20E3CBD0002394DE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		D1F5E2AD20E3CBD0002394DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -395,8 +392,6 @@
 				D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */,
 				D1F5E2A220E3CBCF002394DE /* AppDelegate.h */,
 				D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */,
-				D1F5E2A520E3CBCF002394DE /* ViewController.h */,
-				D1F5E2A620E3CBCF002394DE /* ViewController.m */,
 				D1F5E2A820E3CBD0002394DE /* Assets.xcassets */,
 				D1F5E2AA20E3CBD0002394DE /* Main.storyboard */,
 				D1F5E2AD20E3CBD0002394DE /* Info.plist */,
@@ -702,7 +697,6 @@
 				D1F5E39D20E3CC2A002394DE /* SKP_Silk_code_signs.c in Sources */,
 				D1F5E38B20E3CC2A002394DE /* SKP_Silk_sum_sqr_shift.c in Sources */,
 				D1F5E39120E3CC2A002394DE /* SKP_Silk_decode_core.c in Sources */,
-				D1F5E2A720E3CBCF002394DE /* ViewController.m in Sources */,
 				D1F5E36E20E3CC2A002394DE /* SKP_Silk_noise_shape_analysis_FIX.c in Sources */,
 				D1F5E39320E3CC2A002394DE /* SKP_Silk_find_pitch_lags_FIX.c in Sources */,
 				D1F5E39920E3CC2A002394DE /* SKP_Silk_resampler_private_AR2_arm.S in Sources */,
