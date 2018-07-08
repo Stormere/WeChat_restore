@@ -10,4 +10,5 @@
 
 @interface NSString (NSString_MD5)
 
++(NSString *)MD5_Lower:(NSString *)str ;
 @end

@@ -10,9 +10,9 @@
 
 @interface DBManager : NSObject
 
--(void)initDB:(NSString *)file ;
--(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className;
 
--(void)closeDB;
+-(void)initPath:(const char *)path;
+-(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className dbPath:(const char *)path;
++(DBManager *) sharedInstance;
 
 @end

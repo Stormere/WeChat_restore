@@ -12,6 +12,11 @@
 #import <objc/runtime.h>
 #include <stdio.h>
 #include <stdlib.h>
+#import "NSString+NSString_MD5.h"
+
+#define MM_SQLITE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/MM.sqlite"
+#define WCDB_CONTACT_SQILTE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/WCDB_Contact.sqlite"
+
 
 
 @interface ViewController ()
@@ -20,7 +25,11 @@
 @property (nonatomic,retain) PCMPlayer *player;
 @property (nonatomic,retain) NSMutableArray *fileArray;
 @property (weak) IBOutlet NSTextField *pathTextField;
-@property (nonatomic,retain) DBManager *mmdb;
+@property (weak) IBOutlet NSTableView *tableView;
+@property (weak) IBOutlet NSTableView *recordTableView;
+@property (nonatomic,retain) NSMutableArray *contactDataArray;
+@property (nonatomic,retain) NSMutableArray *recordDataArray;
+
 
 
 
@@ -29,6 +38,70 @@
 
 
 @implementation ViewController
+
+
+-(NSInteger)numberOfRowsInTableView:(NSTableView *)tableView {
+    if (tableView == _recordTableView) {
+        return self.recordDataArray.count;
+    }
+    
+    return self.contactDataArray.count;
+}
+#pragma mark - 行高
+-(CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row{
+    return 44;
+}
+
+//选中的响应
+-(void)tableViewSelectionDidChange:(nonnull NSNotification *)notification{
+    
+    NSTableView* tableView = notification.object;
+    if (tableView == _tableView) {
+        [self.recordDataArray removeAllObjects];
+        [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+        NSString *sql =[NSString stringWithFormat:@"select MesLocalID,Message,Des from Chat_%@",[NSString MD5_Lower:self.contactDataArray[tableView.selectedRow]] ];
+        NSMutableArray *result = [[DBManager sharedInstance] execQuery:[sql UTF8String] className:"MessageModel" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+        for (int i=0; i<result.count; i++) {
+            Class messageModel = objc_getClass("MessageModel");
+            Ivar ivar_message_name = class_getInstanceVariable(messageModel, "Message");
+            id  message_name_id =  object_getIvar(result[i], ivar_message_name);
+            NSString *message = [NSString stringWithFormat:@"%@",message_name_id];
+            
+            // NSLog(@"%@",message);
+            
+            [self.recordDataArray addObject:message];
+        }
+        [self.recordTableView reloadData];
+    }
+}
+
+-(NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row{
+    if (tableView == _recordTableView) {
+        NSString *columnID = tableColumn.identifier;
+        // NSLog(@"columnID : %@ ,row : %ld",columnID,(long)row);
+        NSString *strIdt = @"recordID";
+        NSTableCellView *cell = [tableView makeViewWithIdentifier:strIdt owner:self];
+        if (!cell) {
+            cell = [[NSTableCellView alloc]init];
+            cell.identifier = strIdt;
+        }
+        cell.wantsLayer = YES;
+        cell.layer.backgroundColor = [NSColor orangeColor].CGColor;
+        cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.recordDataArray[row]];
+        return cell;
+    }
+    NSString *columnID = tableColumn.identifier;
+    // NSLog(@"columnID : %@ ,row : %ld",columnID,(long)row);
+    NSString *strIdt = @"contactID";
+    NSTableCellView *cell = [tableView makeViewWithIdentifier:strIdt owner:self];
+    if (!cell) {
+        cell = [[NSTableCellView alloc]init];
+        cell.identifier = strIdt;
+    }
+    cell.wantsLayer = YES;
+    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.contactDataArray[row]];
+    return cell;
+}
 
 - (IBAction)openClick:(NSButton *)sender {
     NSArray<NSURL * > *folderArray = [self openFinder];
@@ -52,8 +125,9 @@
         }
         
         const char *sql = "select fileid,relativepath,domain from Files where domain = 'AppDomain-com.tencent.xin'";
-        [self.mmdb initDB:dbPath];
-        NSMutableArray *result =  [self.mmdb execQuery:sql className:"FileModel" ];
+        [[DBManager sharedInstance] initPath:[dbPath UTF8String] ];
+        
+        NSMutableArray *result =  [[DBManager sharedInstance]execQuery:sql className:"FileModel" dbPath:[dbPath UTF8String]];
         Class fileModel = objc_getClass("FileModel");
         Ivar ivar_file_id = class_getInstanceVariable(fileModel, "fileID");
         Ivar ivar_relative_path = class_getInstanceVariable(fileModel, "relativePath");
@@ -73,16 +147,55 @@
             if ([fileManager fileExistsAtPath:srcPath]) {
                 NSString *dstPath =[NSHomeDirectory() stringByAppendingPathComponent:[NSString stringWithFormat:@"Documents/Test/%@/%@",domain,relativePath]];
                 if (![fileManager fileExistsAtPath:dstPath]) {
-                    [fileManager createDirectoryAtPath:dstPath withIntermediateDirectories:YES attributes:nil error:&error];
+                    [fileManager createDirectoryAtPath:[dstPath stringByDeletingLastPathComponent] withIntermediateDirectories:YES attributes:nil error:&error];
                     [fileManager copyItemAtPath:srcPath toPath:dstPath error:&error];
                 }
                 if (error != nil) {
-                    NSLog(@"%@",error);
+                    NSLog(@"%@--->%@",srcPath,dstPath);
+                   // NSLog(@"%@",dstPath);
+
                 }
            }
         }
-        [self.mmdb closeDB];
+       
+        [self readChatRecord];
     }
+}
+
+
+-(void)readChatRecord{
+    
+    [self.contactDataArray removeAllObjects];
+    
+    [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+    [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
+
+    NSMutableArray *result = [[DBManager sharedInstance] execQuery:"select name,tbl_name from sqlite_master where type = 'table' " className:"MMTables" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+    
+    NSMutableArray *contact_result = [[DBManager sharedInstance] execQuery:"select * from Friend" className:"FriendModel" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
+    
+    for (int i=0; i<result.count; i++) {
+        Class fileModel = objc_getClass("MMTables");
+        Ivar ivar_table_name = class_getInstanceVariable(fileModel, "name");
+        id  table_name_id =  object_getIvar(result[i], ivar_table_name);
+        NSString *table_name = [NSString stringWithFormat:@"%@",table_name_id];
+        if ([table_name hasPrefix:@"Chat"]) {
+            Class friendModel = objc_getClass("FriendModel");
+            Ivar ivar_user_name = class_getInstanceVariable(friendModel, "userName");
+          
+
+            for (int j=0; j<contact_result.count; j++) {
+                id  user_name_id =  object_getIvar(contact_result[j], ivar_user_name);
+                NSString *user_name = [NSString stringWithFormat:@"%@",user_name_id];
+                if ([[NSString MD5_Lower:user_name] isEqualToString:[table_name componentsSeparatedByString:@"_"][1]]) {
+                    [contact_result removeObjectAtIndex:j];
+                    [_contactDataArray addObject:user_name];
+                }
+            }
+        }
+
+    }
+    [self.tableView reloadData];
 }
 
 
@@ -105,7 +218,11 @@
     if (self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil]) {
         _fileArray = [[NSMutableArray alloc] init];
         _player = [[PCMPlayer alloc] init];
-        _mmdb = [[DBManager alloc] init];
+        
+
+        _contactDataArray = [[NSMutableArray alloc] init];
+        _recordDataArray = [[NSMutableArray alloc] init];
+
     }
     return self;
 }
@@ -115,18 +232,19 @@
     if (self = [super initWithCoder:coder   ]) {
         _player = [[PCMPlayer alloc] init];
         _fileArray = [[NSMutableArray alloc] init];
-        _mmdb = [[DBManager alloc] init];
+        _recordDataArray = [[NSMutableArray alloc] init];
+
+
+        _contactDataArray = [[NSMutableArray alloc] init];
 
     }
     return self;
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    NSButton *button = [[NSButton alloc] initWithFrame:CGRectMake(20, 20, 100, 100)];
-    [button setTitle:@"play"];
-    [button setBezelStyle:NSRegularSquareBezelStyle];
-    [button setAction:@selector(click:)];
-    [self.view addSubview:button];
+    NSLog(@"%@",[NSString MD5_Lower:@"wxid_8baaf23wanms22"]);
+    self.tableView.usesAlternatingRowBackgroundColors = YES; //背景颜色的交替，一行白色，一行灰色。设置后，原来设置的 backgroundColor 就无效了。
+    self.recordTableView.usesAlternatingRowBackgroundColors = YES;
 }
 
 -(void)click:(NSButton *)button {

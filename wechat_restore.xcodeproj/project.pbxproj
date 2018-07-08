@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D1F0882120EBC483006CD4E7 /* DBManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D1F0882020EBC483006CD4E7 /* DBManager.m */; };
+		D1E4F7A220F0BFF100AB0EAA /* NSString+NSString_MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = D1E4F7A120F0BFF100AB0EAA /* NSString+NSString_MD5.m */; };
+		D1E4F7A820F0EC2300AB0EAA /* SqliteModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1E4F7A620F0EC2300AB0EAA /* SqliteModel.cpp */; };
+		D1F0882120EBC483006CD4E7 /* DBManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F0882020EBC483006CD4E7 /* DBManager.mm */; };
 		D1F0882420EBC4A5006CD4E7 /* libsqlite3.0.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D1F0882320EBC4A5006CD4E7 /* libsqlite3.0.tbd */; };
-		D1F5E2A420E3CBCF002394DE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2A320E3CBCF002394DE /* AppDelegate.m */; };
+		D1F5E2A420E3CBCF002394DE /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */; };
 		D1F5E2A720E3CBCF002394DE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1F5E2A620E3CBCF002394DE /* ViewController.m */; };
 		D1F5E2A920E3CBD0002394DE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D1F5E2A820E3CBD0002394DE /* Assets.xcassets */; };
 		D1F5E2AC20E3CBD0002394DE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D1F5E2AA20E3CBD0002394DE /* Main.storyboard */; };
@@ -152,12 +154,16 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D1E4F7A020F0BFF100AB0EAA /* NSString+NSString_MD5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+NSString_MD5.h"; sourceTree = "<group>"; };
+		D1E4F7A120F0BFF100AB0EAA /* NSString+NSString_MD5.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSString_MD5.m"; sourceTree = "<group>"; };
+		D1E4F7A620F0EC2300AB0EAA /* SqliteModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SqliteModel.cpp; sourceTree = "<group>"; };
+		D1E4F7A720F0EC2300AB0EAA /* SqliteModel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = SqliteModel.hpp; sourceTree = "<group>"; };
 		D1F0881F20EBC483006CD4E7 /* DBManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DBManager.h; sourceTree = "<group>"; };
-		D1F0882020EBC483006CD4E7 /* DBManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DBManager.m; sourceTree = "<group>"; };
+		D1F0882020EBC483006CD4E7 /* DBManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = DBManager.mm; sourceTree = "<group>"; };
 		D1F0882320EBC4A5006CD4E7 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
 		D1F5E29F20E3CBCF002394DE /* wechat_restore.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wechat_restore.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D1F5E2A220E3CBCF002394DE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		D1F5E2A320E3CBCF002394DE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = AppDelegate.mm; sourceTree = "<group>"; };
 		D1F5E2A520E3CBCF002394DE /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		D1F5E2A620E3CBCF002394DE /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		D1F5E2A820E3CBD0002394DE /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -373,7 +379,7 @@
 			isa = PBXGroup;
 			children = (
 				D1F5E2A220E3CBCF002394DE /* AppDelegate.h */,
-				D1F5E2A320E3CBCF002394DE /* AppDelegate.m */,
+				D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */,
 				D1F5E2A520E3CBCF002394DE /* ViewController.h */,
 				D1F5E2A620E3CBCF002394DE /* ViewController.m */,
 				D1F5E2A820E3CBD0002394DE /* Assets.xcassets */,
@@ -384,7 +390,11 @@
 				D1F5E3E320E3CE3C002394DE /* PCMPlayer.h */,
 				D1F5E3E420E3CE3C002394DE /* PCMPlayer.m */,
 				D1F0881F20EBC483006CD4E7 /* DBManager.h */,
-				D1F0882020EBC483006CD4E7 /* DBManager.m */,
+				D1F0882020EBC483006CD4E7 /* DBManager.mm */,
+				D1E4F7A020F0BFF100AB0EAA /* NSString+NSString_MD5.h */,
+				D1E4F7A120F0BFF100AB0EAA /* NSString+NSString_MD5.m */,
+				D1E4F7A620F0EC2300AB0EAA /* SqliteModel.cpp */,
+				D1E4F7A720F0EC2300AB0EAA /* SqliteModel.hpp */,
 			);
 			path = wechat_restore;
 			sourceTree = "<group>";
@@ -657,6 +667,7 @@
 				D1F5E3E120E3CC2A002394DE /* SKP_Silk_decoder_set_fs.c in Sources */,
 				D1F5E3D820E3CC2A002394DE /* SKP_Silk_prefilter_FIX_arm.S in Sources */,
 				D1F5E3CC20E3CC2A002394DE /* SKP_Silk_PLC.c in Sources */,
+				D1E4F7A820F0EC2300AB0EAA /* SqliteModel.cpp in Sources */,
 				D1F5E3E220E3CC2A002394DE /* SKP_Silk_residual_energy_FIX.c in Sources */,
 				D1F5E37220E3CC2A002394DE /* SKP_Silk_resampler_up2.c in Sources */,
 				D1F5E36620E3CC2A002394DE /* SKP_Silk_bwexpander_32.c in Sources */,
@@ -664,11 +675,12 @@
 				D1F5E3DE20E3CC2A002394DE /* SKP_Silk_LTP_scale_ctrl_FIX.c in Sources */,
 				D1F5E35D20E3CC2A002394DE /* SKP_Silk_corrMatrix_FIX.c in Sources */,
 				D1F5E37920E3CC2A002394DE /* SKP_Silk_shell_coder.c in Sources */,
-				D1F0882120EBC483006CD4E7 /* DBManager.m in Sources */,
+				D1F0882120EBC483006CD4E7 /* DBManager.mm in Sources */,
 				D1F5E39420E3CC2A002394DE /* SKP_Silk_tables_NLSF_CB1_10.c in Sources */,
 				D1F5E38720E3CC2A002394DE /* SKP_Silk_process_NLSFs_FIX.c in Sources */,
 				D1F5E3B320E3CC2A002394DE /* SKP_Silk_resampler_private_up2_HQ.c in Sources */,
 				D1F5E39E20E3CC2A002394DE /* SKP_Silk_control_audio_bandwidth.c in Sources */,
+				D1E4F7A220F0BFF100AB0EAA /* NSString+NSString_MD5.m in Sources */,
 				D1F5E3C520E3CC2A002394DE /* SKP_Silk_scale_copy_vector16.c in Sources */,
 				D1F5E3B220E3CC2A002394DE /* SKP_Silk_find_LTP_FIX.c in Sources */,
 				D1F5E38820E3CC2A002394DE /* SKP_Silk_biquad_alt.c in Sources */,
@@ -755,7 +767,7 @@
 				D1F5E3B420E3CC2A002394DE /* SKP_Silk_allpass_int_arm.S in Sources */,
 				D1F5E38920E3CC2A002394DE /* SKP_Silk_tables_LTP.c in Sources */,
 				D1F5E2AF20E3CBD0002394DE /* main.m in Sources */,
-				D1F5E2A420E3CBCF002394DE /* AppDelegate.m in Sources */,
+				D1F5E2A420E3CBCF002394DE /* AppDelegate.mm in Sources */,
 				D1F5E3BD20E3CC2A002394DE /* SKP_Silk_decode_pitch.c in Sources */,
 				D1F5E3D220E3CC2A002394DE /* SKP_Silk_A2NLSF_arm.S in Sources */,
 				D1F5E38320E3CC2A002394DE /* SKP_Silk_tables_gain.c in Sources */,
@@ -909,6 +921,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = NO;
 				CODE_SIGN_ENTITLEMENTS = wechat_restore/wechat_restore.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -918,7 +931,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.play-wechat-silk";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.wechat-restore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -927,6 +940,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = NO;
 				CODE_SIGN_ENTITLEMENTS = wechat_restore/wechat_restore.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -936,7 +950,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.play-wechat-silk";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.wechat-restore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

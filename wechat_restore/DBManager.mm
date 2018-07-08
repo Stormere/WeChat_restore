@@ -10,12 +10,16 @@
 #import <sqlite3.h>
 #import <objc/message.h>
 #include <iostream>
+#include <vector>
+#include "SqliteModel.hpp"
 
+using namespace std;
+
+static  vector<SqliteModel *> sqlites(10);
+
+dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //提交验证码的信号量
 
 @interface DBManager()
-
-@property (nonatomic )sqlite3 *db ;
-@property(atomic,retain) NSMutableArray *sqliteModel;
 
 
 
@@ -31,7 +35,6 @@
     static DBManager * s_instance_dj_singleton = nil;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        
         s_instance_dj_singleton = [[super allocWithZone:nil] init];
     });
     return s_instance_dj_singleton;
@@ -43,47 +46,59 @@
     return [DBManager sharedInstance];
 }
 
--(void)addSqliteModel:(NSString *)path {
-   
-   
+-(void)initPath:(const char *)path {
     
+    dispatch_semaphore_wait(event,DISPATCH_TIME_FOREVER);
+    for (int i=0; i<sqlites.size(); i++) {
+        
+        if (sqlites[i] != nil) {
+            if (strcmp(path, sqlites[i]->path) == 0) {
+                break;
+            }
+        } else {
+            sqlites[i] = (SqliteModel *)malloc(sizeof(SqliteModel));
+            
+            sqlites[i]->path = (char *)malloc(strlen(path));
+            memcpy(sqlites[i]->path, path, strlen(path));
+            int result = sqlite3_open(path, &(sqlites[i]->db));
+            if (result == SQLITE_OK) {
+                NSLog(@"成功打开数据库.");
+            } else {
+                NSLog(@"%s",sqlite3_errstr(result)) ;
+            }
+            break;
+        }
+        
+       
+    }
+    dispatch_semaphore_signal(event);
+
 }
 
 -(void)dealloc {
-    if (_db != nil) {
-        int result = sqlite3_close(_db);
-        if (result == SQLITE_OK) {
-            NSLog(@"成功关闭数据库.");
-        } else {
-            NSLog(@"%s",sqlite3_errstr(result)) ;
+    for (int i=0; i<sqlites.size(); i++) {
+        if (sqlites[i] -> db != nil) {
+            int result = sqlite3_close(sqlites[i] -> db);
+            if (result == SQLITE_OK) {
+                NSLog(@"成功关闭数据库.");
+            } else {
+                NSLog(@"%s",sqlite3_errstr(result)) ;
+            }
+            sqlites[i] -> db = nil;
         }
-        _db = nil;
     }
 }
 
--(void)initDB:(NSString *)file {
-    int result = 0;
-    if (_db != nil) {
-        NSLog(@"%s","数据库已经打开。");
-        return;
+
+-(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className dbPath:(const char *)path{
+    
+    sqlite3 *_db = nil;
+    for (int i=0; i<sqlites.size(); i++) {
+        if (strcmp(path, sqlites[i] -> path) == 0 ) {
+            _db = sqlites[i]->db;
+            break;
+        }
     }
-    result = sqlite3_open([file UTF8String], &_db);
-    if (result == SQLITE_OK) {
-        NSLog(@"成功打开数据库.");
-    } else {
-        NSLog(@"%s",sqlite3_errstr(result)) ;
-    }
-}
--(void)closeDB{
-    int result = sqlite3_close(_db);
-    _db = nil;
-    if (result == SQLITE_OK) {
-        NSLog(@"成功关闭数据库.");
-    } else {
-        NSLog(@"%s",sqlite3_errstr(result)) ;
-    }
-}
--(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className {
     
     if (_db == nil) {
         return nil;
@@ -195,7 +210,18 @@
                         case SQLITE_TEXT:
                         {
                             Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
-                            object_setIvar(instance, ivar, [NSString stringWithFormat:@"%s",sqlite3_column_text(stmt,i)]);
+                            
+//                            char *buffer = (char *)malloc(sqlite3_column_bytes(stmt, i));
+//
+//                            sprintf(buffer, "%s",sqlite3_column_text(stmt,i));
+                            
+                            if (strcmp("MessageModel", className)== 0 && strcmp("Message", sqlite3_column_name(stmt,i) ) == 0) {
+                                
+                                printf("00000000000000%s\n",sqlite3_column_text(stmt,i));
+                                NSLog(@"%@",[NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
+
+                            }
+                            object_setIvar(instance, ivar, [NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
                         }
                             break;
                         case SQLITE_BLOB:
