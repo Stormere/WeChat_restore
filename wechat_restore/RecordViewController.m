@@ -92,7 +92,7 @@
         NSString *src = [NSHomeDirectory() stringByAppendingPathComponent:path];
         
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_player playWithPath:(char *)[src UTF8String] info:1 API_Fs_Hz:24000];
+            [_player playWithPath:(char *)[src UTF8String] info:1 API_Fs_Hz:8000];
         });
     }
     

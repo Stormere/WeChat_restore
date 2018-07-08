@@ -29,18 +29,7 @@ static SKP_int32 rand_seed = 1;
 #define MIN_SIZE_PER_FRAME 1024*1024
 #define QUEUE_BUFFER_SIZE 3      //队列缓冲个数
 
-//一次播放的buffer的长度
-#define PLAY_SIZE                (2048*sizeof(SKP_int16))
-
-//播放的缓冲区
-char *play_buffer = NULL;
-char *play_buffer_start = NULL;
-//dispatch_semaphore_t play_event ; //提交验证码的信号量
-//dispatch_semaphore_t decode_event ; //提交验证码的信号量
-
 static PCMPlayer *selfClass =nil;
-
-
 
 @interface PCMPlayer() {
     
@@ -58,10 +47,6 @@ static PCMPlayer *selfClass =nil;
 
 @interface PCMPlayer()
 
-@property  (strong) dispatch_semaphore_t play_event ; //提交验证码的信号量
-@property  (strong) dispatch_semaphore_t decode_event ; //提交验证码的信号量
-
-
 
 @end
 
@@ -73,15 +58,10 @@ static PCMPlayer *selfClass =nil;
     if (self) {
         selfClass = self;
         sysnLock = [[NSLock alloc]init];
-//        play_event = nil;
-//        decode_event = nil;
-        _play_event = dispatch_semaphore_create(0);
-        _decode_event = dispatch_semaphore_create(0);
-
         // 播放PCM使用
         if (_audioDescription.mSampleRate <= 0) {
             //设置音频参数
-            _audioDescription.mSampleRate = 24000.0;//采样率
+            _audioDescription.mSampleRate = 8000.0;//采样率
             _audioDescription.mFormatID = kAudioFormatLinearPCM;
             // 下面这个是保存音频数据的方式的说明，如可以根据大端字节序或小端字节序，浮点数或整数以及不同体位去保存数据
             _audioDescription.mFormatFlags = kLinearPCMFormatFlagIsSignedInteger | kAudioFormatFlagIsPacked;
@@ -174,24 +154,9 @@ unsigned long GetHighResolutionTime() /* O: time in usec*/
 
 
 
-void *play_stream_data(void *pParam)
-{
-    while (1)
-    {
-        dispatch_semaphore_wait(selfClass.play_event,DISPATCH_TIME_FOREVER);
-        //[selfClass playWithData:[NSData dataWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"1" ofType:@"aud"]]];
-        [selfClass playWithData:[NSData dataWithBytes:play_buffer_start length:(play_buffer-play_buffer_start)]];
-        dispatch_semaphore_signal(selfClass.decode_event);
-
-        
-    }
-}
-
 -(void)playWithPath:( char *)srcFile info:(int )verbose API_Fs_Hz:(int ) API_Fs_Hz{
     
-    play_buffer = (char *)malloc(PLAY_SIZE);
-    memset(play_buffer, 0, PLAY_SIZE);
-    play_buffer_start = play_buffer;
+    NSMutableData *data = [[NSMutableData alloc] init];
     
     unsigned long tottime, starttime;
     double    filetime;
@@ -238,11 +203,6 @@ void *play_stream_data(void *pParam)
         }
     }
     
-    pthread_t tid;
-    int error = pthread_create(&tid, NULL, play_stream_data, NULL);
-    if (error != 0) {
-        printf("%s\n","can't create thread!");
-    }
     /* Set the samplingrate that is requested for the output */
     if (API_Fs_Hz == 0) {
         DecControl.API_sampleRate = 24000;
@@ -282,8 +242,6 @@ void *play_stream_data(void *pParam)
         payloadEnd += nBytes;
         totPackets++;
     }
-    
-    long pack_length = 0;// 已经解码的数据的长度
     
     while (1) {
         /* Read payload size */
@@ -377,17 +335,9 @@ void *play_stream_data(void *pParam)
 #ifdef _SYSTEM_IS_BIG_ENDIAN
         swap_endian(out, tot_len);
 #endif
-        // fwrite(out, sizeof(SKP_int16), tot_len, speechOutFile);
-        pack_length += sizeof(SKP_int16) * tot_len;
-        if (pack_length > PLAY_SIZE / 2)
-        {
-            dispatch_semaphore_signal(selfClass.play_event);
-            dispatch_semaphore_wait(selfClass.decode_event,DISPATCH_TIME_FOREVER);
-            pack_length = 0;
-            play_buffer = play_buffer_start;
-        }
-        memcpy(play_buffer, out, sizeof(SKP_int16) * tot_len);
-        play_buffer += sizeof(SKP_int16) * tot_len;
+        
+        [data appendBytes:(void *)out length:sizeof(SKP_int16) * tot_len];
+
         
         /* Update buffer */
         totBytes = 0;
@@ -473,17 +423,7 @@ void *play_stream_data(void *pParam)
         swap_endian(out, tot_len);
 #endif
         // fwrite(out, sizeof(SKP_int16), tot_len, speechOutFile);
-        pack_length += sizeof(SKP_int16) * tot_len;
-        if (pack_length > PLAY_SIZE / 2)
-        {
-            dispatch_semaphore_signal(selfClass.play_event);
-            dispatch_semaphore_wait(selfClass.decode_event,DISPATCH_TIME_FOREVER);
-            pack_length = 0;
-            play_buffer = play_buffer_start;
-        }
-        memcpy(play_buffer, out, sizeof(SKP_int16) * tot_len);
-        play_buffer += sizeof(SKP_int16) * tot_len;
-        
+        [data appendBytes:(void *)out length:sizeof(SKP_int16) * tot_len];
         /* Update Buffer */
         totBytes = 0;
         for (i = 0; i < MAX_LBRR_DELAY; i++) {
@@ -496,16 +436,9 @@ void *play_stream_data(void *pParam)
             fprintf(stderr, "\rPackets decoded:              %d", totPackets);
         }
     }
-    dispatch_semaphore_signal(selfClass.play_event);
-    dispatch_semaphore_wait(selfClass.decode_event,DISPATCH_TIME_FOREVER);
     
-//    SetEvent(play_event);//播放
-//    WaitForSingleObject(decode_event, INFINITE);
-//    ResetEvent(decode_event);
-//    TerminateThread(play_thread, 0);
-//    CloseHandle(play_thread);
-//    CloseHandle(play_event);
-//    CloseHandle(decode_event);
+    [selfClass playWithData:data];
+
     /* Free decoder */
     free(psDec);
     /* Close files */
@@ -520,9 +453,6 @@ void *play_stream_data(void *pParam)
         /* print time and % of realtime */
         printf("%.3f %.3f %d\n", 1e-6 * tottime, 1e-4 * tottime / filetime, totPackets);
     }
-    play_buffer = play_buffer_start;
-    play_buffer_start = NULL;
-    free(play_buffer);
 }
 #ifdef AAA
 /* Function to convert a little endian int16 to a */
@@ -549,10 +479,7 @@ void swap_endian(
 
 // 回调回来把buffer状态设为未使用
 static void AudioPlayerAQInputCallback(void* inUserData,AudioQueueRef audioQueueRef, AudioQueueBufferRef audioQueueBufferRef) {
-    
     PCMPlayer* player = (__bridge PCMPlayer*)inUserData;
-    
-    
     [player resetBufferState:audioQueueRef and:audioQueueBufferRef];
 }
 
