@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D141F88220F2565300369341 /* libxml2.2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = D141F88120F2565300369341 /* libxml2.2.tbd */; };
+		D141F88620F2640A00369341 /* GDataXMLNode.m in Sources */ = {isa = PBXBuildFile; fileRef = D141F88520F2640A00369341 /* GDataXMLNode.m */; };
 		D1DF33AC20F1D13000E2C7BA /* RecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */; };
 		D1DF33AD20F1D13000E2C7BA /* ContatctViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33A920F1D12F00E2C7BA /* ContatctViewController.m */; };
 		D1DF33AE20F1D13000E2C7BA /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33AA20F1D12F00E2C7BA /* MainViewController.m */; };
@@ -156,6 +158,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D141F88120F2565300369341 /* libxml2.2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.2.tbd; path = usr/lib/libxml2.2.tbd; sourceTree = SDKROOT; };
+		D141F88420F2640A00369341 /* GDataXMLNode.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GDataXMLNode.h; sourceTree = "<group>"; };
+		D141F88520F2640A00369341 /* GDataXMLNode.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = GDataXMLNode.m; sourceTree = "<group>"; };
 		D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordViewController.m; sourceTree = "<group>"; };
 		D1DF33A720F1D12F00E2C7BA /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		D1DF33A820F1D12F00E2C7BA /* RecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordViewController.h; sourceTree = "<group>"; };
@@ -348,6 +353,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D141F88220F2565300369341 /* libxml2.2.tbd in Frameworks */,
 				D1F0882420EBC4A5006CD4E7 /* libsqlite3.0.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -355,9 +361,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D141F88320F263EB00369341 /* GData */ = {
+			isa = PBXGroup;
+			children = (
+				D141F88420F2640A00369341 /* GDataXMLNode.h */,
+				D141F88520F2640A00369341 /* GDataXMLNode.m */,
+			);
+			name = GData;
+			sourceTree = "<group>";
+		};
 		D1F0882220EBC4A5006CD4E7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D141F88120F2565300369341 /* libxml2.2.tbd */,
 				D1F0882320EBC4A5006CD4E7 /* libsqlite3.0.tbd */,
 			);
 			name = Frameworks;
@@ -366,6 +382,7 @@
 		D1F5E29620E3CBCF002394DE = {
 			isa = PBXGroup;
 			children = (
+				D141F88320F263EB00369341 /* GData */,
 				D1F5E2B620E3CC2A002394DE /* silk_v3 */,
 				D1F5E2A120E3CBCF002394DE /* wechat_restore */,
 				D1F5E2A020E3CBCF002394DE /* Products */,
@@ -773,6 +790,7 @@
 				D1F5E3C920E3CC2A002394DE /* SKP_Silk_decode_parameters.c in Sources */,
 				D1F5E3A120E3CC2A002394DE /* SKP_Silk_NLSF_MSVQ_decode.c in Sources */,
 				D1F5E3AF20E3CC2A002394DE /* SKP_Silk_array_maxabs.c in Sources */,
+				D141F88620F2640A00369341 /* GDataXMLNode.m in Sources */,
 				D1F5E37620E3CC2A002394DE /* SKP_Silk_sigm_Q15_arm.S in Sources */,
 				D1F5E3DA20E3CC2A002394DE /* SKP_Silk_NSQ.c in Sources */,
 				D1F5E3B420E3CC2A002394DE /* SKP_Silk_allpass_int_arm.S in Sources */,
@@ -938,11 +956,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = K49P2L9GMW;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = wechat_restore/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.wechat-restore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -957,11 +977,13 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = K49P2L9GMW;
+				HEADER_SEARCH_PATHS = /usr/include/libxml2;
 				INFOPLIST_FILE = wechat_restore/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				OTHER_LDFLAGS = "-lxml2";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.nysofltand.www.wechat-restore";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

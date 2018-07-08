@@ -84,6 +84,11 @@
     NSDictionary *dict =self.dataArray[table.selectedRow];
     NSString *type = [NSString stringWithFormat:@"%@",[dict valueForKey:@"Type"]];
     NSString *mesLocalID = [dict valueForKey:@"MesLocalID"];
+    
+    NSString *message_content = [dict valueForKey:@"Message"];
+    
+    NSLog(@"%@",message_content);
+
 
     
     if ([type isEqualToString:@"34"]) {
@@ -96,7 +101,7 @@
         });
     }
     
-    NSLog(@"%@",self.dataArray[table.selectedRow]);
+   // NSLog(@"%@",self.dataArray[table.selectedRow]);
 }
 
 
