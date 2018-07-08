@@ -11,9 +11,6 @@
 #import "RecordViewController.h"
 #import "PCMPlayer.h"
 #import "DBManager.h"
-#import <objc/runtime.h>
-#include <stdio.h>
-#include <stdlib.h>
 #import "NSString+NSString_MD5.h"
 
 #define MM_SQLITE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/MM.sqlite"
@@ -59,21 +56,16 @@
         const char *sql = "select fileid,relativepath,domain from Files where domain = 'AppDomain-com.tencent.xin'";
         [[DBManager sharedInstance] initPath:[dbPath UTF8String] ];
         
-        NSMutableArray *result =  [[DBManager sharedInstance]execQuery:sql className:"FileModel" dbPath:[dbPath UTF8String]];
-        Class fileModel = objc_getClass("FileModel");
-        Ivar ivar_file_id = class_getInstanceVariable(fileModel, "fileID");
-        Ivar ivar_relative_path = class_getInstanceVariable(fileModel, "relativePath");
-        Ivar ivar_domain = class_getInstanceVariable(fileModel, "domain");
+        NSMutableArray *result =  [[DBManager sharedInstance]execQuery:sql  dbPath:[dbPath UTF8String]];
         [fileManager createDirectoryAtPath:[NSHomeDirectory() stringByAppendingPathComponent:@"Documents/Test"] withIntermediateDirectories:YES attributes:nil error:&error];
         if (error != nil) {
             NSLog(@"%@",error);
         }
         NSLog(@"%@",NSHomeDirectory());
         for (int i=0; i<result.count; i++) {
-            id  value =  object_getIvar(result[i], ivar_file_id);
-            id  relativePath =  object_getIvar(result[i], ivar_relative_path);
-            id  domain =  object_getIvar(result[i], ivar_domain);
-            NSString *fileID =[NSString stringWithFormat:@"%@",value];
+            NSString  *relativePath =  [result[i] valueForKey:@"relativePath"];
+            NSString  *domain =  [result[i] valueForKey:@"domain"] ;
+            NSString *fileID =[result[i] valueForKey:@"fileID"];
             NSString *start = [fileID substringWithRange:NSMakeRange(0, 2)];
             NSString *srcPath = [[path  stringByAppendingPathComponent:start] stringByAppendingPathComponent:fileID];
             if ([fileManager fileExistsAtPath:srcPath]) {
@@ -102,23 +94,15 @@
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
     
-    NSMutableArray *result = [[DBManager sharedInstance] execQuery:"select name,tbl_name from sqlite_master where type = 'table' " className:"MMTables" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+    NSMutableArray *result = [[DBManager sharedInstance] execQuery:"select name,tbl_name from sqlite_master where type = 'table' " dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
     
-    NSMutableArray *contact_result = [[DBManager sharedInstance] execQuery:"select * from Friend" className:"FriendModel" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
+    NSMutableArray *contact_result = [[DBManager sharedInstance] execQuery:"select * from Friend"  dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
     
     for (int i=0; i<result.count; i++) {
-        Class fileModel = objc_getClass("MMTables");
-        Ivar ivar_table_name = class_getInstanceVariable(fileModel, "name");
-        id  table_name_id =  object_getIvar(result[i], ivar_table_name);
-        NSString *table_name = [NSString stringWithFormat:@"%@",table_name_id];
+        NSString *table_name = [result[i]  valueForKey:@"name"];
         if ([table_name hasPrefix:@"Chat"]) {
-            Class friendModel = objc_getClass("FriendModel");
-            Ivar ivar_user_name = class_getInstanceVariable(friendModel, "userName");
-            
-            
             for (int j=0; j<contact_result.count; j++) {
-                id  user_name_id =  object_getIvar(contact_result[j], ivar_user_name);
-                NSString *user_name = [NSString stringWithFormat:@"%@",user_name_id];
+                NSString *user_name = [contact_result[j]  valueForKey:@"userName"];
                 if ([[NSString MD5_Lower:user_name] isEqualToString:[table_name componentsSeparatedByString:@"_"][1]]) {
                     [contact_result removeObjectAtIndex:j];
                     [_dataArray addObject:user_name];

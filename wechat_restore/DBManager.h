@@ -12,7 +12,7 @@
 
 
 -(void)initPath:(const char *)path;
--(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className dbPath:(const char *)path;
+-(NSMutableArray *)execQuery:(const char *) sql dbPath:(const char *)path;
 +(DBManager *) sharedInstance;
 
 @end

@@ -11,7 +11,6 @@
 #import "RecordViewController.h"
 #import "PCMPlayer.h"
 #import "DBManager.h"
-#import <objc/runtime.h>
 #import "NSString+NSString_MD5.h"
 
 #define MM_SQLITE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/MM.sqlite"
@@ -47,7 +46,7 @@
         cell.identifier = strIdt;
     }
     cell.wantsLayer = YES;
-    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.dataArray[row]];
+    cell.textField.stringValue = [NSString stringWithFormat:@"%@",[self.dataArray[row]  valueForKey:@"Message"]];
     return cell;
 }
 
@@ -57,16 +56,20 @@
     [self.dataArray removeAllObjects];
     [[DBManager sharedInstance] initPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
     NSString *sql =[NSString stringWithFormat:@"select MesLocalID,Message,Des from Chat_%@",[NSString MD5_Lower:wxid]] ;
-    NSMutableArray *result = [[DBManager sharedInstance] execQuery:[sql UTF8String] className:"MessageModel" dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
-    for (int i=0; i<result.count; i++) {
-        Class messageModel = objc_getClass("MessageModel");
-        Ivar ivar_message_name = class_getInstanceVariable(messageModel, "Message");
-        id  message_name_id =  object_getIvar(result[i], ivar_message_name);
-        NSString *message = [NSString stringWithFormat:@"%@",message_name_id];
-        [self.dataArray addObject:message];
-    }
+    self.dataArray = [[DBManager sharedInstance] execQuery:[sql UTF8String] dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:MM_SQLITE_PATH] UTF8String]];
+    
     [self.tableView reloadData];
 }
+
+
+//选中的响应
+-(void)tableViewSelectionDidChange:(nonnull NSNotification *)notification{
+    NSTableView *table = notification.object;
+    
+    
+    NSLog(@"%@",self.dataArray[table.selectedRow]);
+}
+
 
 - (void)encodeWithCoder:(nonnull NSCoder *)aCoder {
     

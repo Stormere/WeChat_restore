@@ -8,7 +8,6 @@
 
 #import "DBManager.h"
 #import <sqlite3.h>
-#import <objc/message.h>
 #include <iostream>
 #include <vector>
 #include "SqliteModel.hpp"
@@ -57,7 +56,6 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
             }
         } else {
             dbArray[i] = (SqliteModel *)malloc(sizeof(SqliteModel));
-            
             dbArray[i]->path = (char *)malloc(strlen(path));
             memcpy(dbArray[i]->path, path, strlen(path));
             int result = sqlite3_open(path, &(dbArray[i]->db));
@@ -68,8 +66,6 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
             }
             break;
         }
-        
-       
     }
     dispatch_semaphore_signal(event);
 
@@ -90,8 +86,7 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
 }
 
 
--(NSMutableArray *)execQuery:(const char *) sql className:(const char *)className dbPath:(const char *)path{
-    
+-(NSMutableArray *)execQuery:(const char *) sql dbPath:(const char *)path{
     sqlite3 *_db = nil;
     for (int i=0; i<dbArray.size(); i++) {
         if (dbArray[i] != nil) {
@@ -101,7 +96,6 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
             }
         }
     }
-    
     if (_db == nil) {
         return nil;
     }
@@ -111,132 +105,44 @@ dispatch_semaphore_t event = dispatch_semaphore_create(1) ; //
     int n_columns = sqlite3_column_count(stmt);
     int ret = 0;
     int type = 0;
-    Class Model = objc_getClass(className);
-    if(!Model){
-        Model = objc_allocateClassPair([NSObject class], className, 0);
-        ret = sqlite3_step(stmt);
-        for (int i=0; i< n_columns; i++) {
-            type = sqlite3_column_type(stmt,i);
-            const char *property = [[NSString stringWithFormat:@"%s",(const char *)(char *)sqlite3_column_name(stmt,i)] cStringUsingEncoding:NSASCIIStringEncoding] ;
-            switch(type) {
-                case SQLITE_INTEGER:
-                    class_addIvar(Model, property, sizeof(id), log2(sizeof(id)), "i");
-                    break;
-                case SQLITE_FLOAT:
-                    class_addIvar(Model, property, sizeof(id), log2(sizeof(id)), "f");
-                    break;
-                case SQLITE_TEXT:
-                {
-                    class_addIvar(Model, property, sizeof(NSString *), log2(sizeof(NSString *)), @encode(NSString *));
-                }
-                    break;
-                case SQLITE_BLOB:
-                {
-                    class_addIvar(Model, property, sizeof(NSData *), log2(sizeof(NSData *)), @encode(NSData *));
-                }
-                    break;
-                case SQLITE_NULL:
-                    break;
-                default:
-                    break;
-            }
-        }
-        objc_registerClassPair(Model);
-        
-        
-        id instance = [[Model alloc] init];
-        for( int i= 0;i<n_columns;i++ ) {
-            
-            type = sqlite3_column_type(stmt,i);
-            switch(type) {
-                case SQLITE_INTEGER:
-                {
-                    Ivar ivar = class_getInstanceVariable(Model, (char *)sqlite3_column_name(stmt,i));
-                    object_setIvar(instance, ivar, @(sqlite3_column_int(stmt,i)));
-                }
-                    break;
-                case SQLITE_FLOAT:
-                {
-                    Ivar ivar = class_getInstanceVariable(Model, (char *)sqlite3_column_name(stmt,i));
-                    object_setIvar(instance, ivar, @(sqlite3_column_double(stmt,i)));
-                }
-                    break;
-                case SQLITE_TEXT:
-                {
-                    Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
-                    object_setIvar(instance, ivar, [NSString stringWithFormat:@"%s",sqlite3_column_text(stmt,i)]);
-                }
-                    break;
-                case SQLITE_BLOB:
-                {
-                    Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
-                    const void * blob = sqlite3_column_blob(stmt, i);
-                    //得到字段中数据的长度
-                    int sizw = sqlite3_column_bytes(stmt, i);
-                    //根据字节和长度得到data对象
-                    NSData *data = [[NSData alloc] initWithBytes:blob length:sizw];
-                    object_setIvar(instance, ivar, data);
-                }
-                    break;
-                case SQLITE_NULL:
-                    break;
-                default:
-                    break;
-                    
-            }
-        }
-        [result addObject:instance];
-        
-        
-    }
     do {
         ret = sqlite3_step(stmt);
         if(ret == SQLITE_ROW) {
-            id instance = [[Model alloc] init];
+            NSMutableDictionary *dict= [[NSMutableDictionary alloc] init];
             for( int i= 0;i<n_columns;i++ ) {
-                
                 type = sqlite3_column_type(stmt,i);
+                NSString *filed = [NSString stringWithCString:(char *)sqlite3_column_name(stmt, i) encoding:NSUTF8StringEncoding];
                 switch(type) {
                         case SQLITE_INTEGER:
                         {
-                            Ivar ivar = class_getInstanceVariable(Model, (char *)sqlite3_column_name(stmt,i));
-                            object_setIvar(instance, ivar, @(sqlite3_column_int(stmt,i)));
+                            [dict setValue:@(sqlite3_column_int(stmt, i)) forKey:filed];
                         }
                             break;
                         case SQLITE_FLOAT:
                         {
-                            Ivar ivar = class_getInstanceVariable(Model, (char *)sqlite3_column_name(stmt,i));
-                            object_setIvar(instance, ivar, @(sqlite3_column_double(stmt,i)));
+                            [dict setValue:@(sqlite3_column_double(stmt, i)) forKey:filed];
                         }
                             break;
                         case SQLITE_TEXT:
                         {
-                            Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
-                            if (strcmp("MessageModel", className)== 0 && strcmp("Message", sqlite3_column_name(stmt,i) ) == 0) {
-                                NSLog(@"%@",[NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
-                            }
-                            object_setIvar(instance, ivar, [NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding] );
+                            [dict setValue:[NSString stringWithCString:(char *)sqlite3_column_text(stmt, i) encoding:NSUTF8StringEncoding]  forKey:filed];
                         }
                             break;
                         case SQLITE_BLOB:
                         {
-                            Ivar ivar = class_getInstanceVariable(Model, sqlite3_column_name(stmt,i));
                             const void * blob = sqlite3_column_blob(stmt, i);
-                            //得到字段中数据的长度
                             int sizw = sqlite3_column_bytes(stmt, i);
-                            //根据字节和长度得到data对象
                             NSData *data = [[NSData alloc] initWithBytes:blob length:sizw];
-                            object_setIvar(instance, ivar, data);                            
+                            [dict setValue:data  forKey:filed];
                         }
                             break;
                         case SQLITE_NULL:
                             break;
                         default:
                             break;
-                        
                 }
             }
-            [result addObject:instance];
+            [result addObject:dict];
         } else if(ret == SQLITE_DONE) {
             break;
         } else {
