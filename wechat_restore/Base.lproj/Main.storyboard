@@ -833,8 +833,8 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contactTableView" destination="pBo-Zp-TcF" id="lSL-Sf-BAt"/>
                         <outlet property="pathTextField" destination="ESz-zm-mQC" id="Be6-4K-FFy"/>
+                        <outlet property="tableView" destination="pBo-Zp-TcF" id="sbb-2C-KdG"/>
                     </connections>
                 </viewController>
                 <customObject id="Vgt-pf-wpX" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
@@ -925,7 +925,7 @@
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="recordTableView" destination="CGs-er-028" id="BHq-qD-vdZ"/>
+                        <outlet property="tableView" destination="CGs-er-028" id="SCw-PC-P1n"/>
                     </connections>
                 </viewController>
                 <customObject id="w2T-2W-gLd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
