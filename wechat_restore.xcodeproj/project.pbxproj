@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D1DF33AC20F1D13000E2C7BA /* RecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */; };
+		D1DF33AD20F1D13000E2C7BA /* ContatctViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33A920F1D12F00E2C7BA /* ContatctViewController.m */; };
+		D1DF33AE20F1D13000E2C7BA /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = D1DF33AA20F1D12F00E2C7BA /* MainViewController.m */; };
 		D1E4F7A220F0BFF100AB0EAA /* NSString+NSString_MD5.m in Sources */ = {isa = PBXBuildFile; fileRef = D1E4F7A120F0BFF100AB0EAA /* NSString+NSString_MD5.m */; };
 		D1E4F7A820F0EC2300AB0EAA /* SqliteModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D1E4F7A620F0EC2300AB0EAA /* SqliteModel.cpp */; };
 		D1F0882120EBC483006CD4E7 /* DBManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = D1F0882020EBC483006CD4E7 /* DBManager.mm */; };
@@ -154,6 +157,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RecordViewController.m; sourceTree = "<group>"; };
+		D1DF33A720F1D12F00E2C7BA /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		D1DF33A820F1D12F00E2C7BA /* RecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RecordViewController.h; sourceTree = "<group>"; };
+		D1DF33A920F1D12F00E2C7BA /* ContatctViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ContatctViewController.m; sourceTree = "<group>"; };
+		D1DF33AA20F1D12F00E2C7BA /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		D1DF33AB20F1D12F00E2C7BA /* ContatctViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContatctViewController.h; sourceTree = "<group>"; };
 		D1E4F7A020F0BFF100AB0EAA /* NSString+NSString_MD5.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSString+NSString_MD5.h"; sourceTree = "<group>"; };
 		D1E4F7A120F0BFF100AB0EAA /* NSString+NSString_MD5.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSString+NSString_MD5.m"; sourceTree = "<group>"; };
 		D1E4F7A620F0EC2300AB0EAA /* SqliteModel.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = SqliteModel.cpp; sourceTree = "<group>"; };
@@ -378,6 +387,12 @@
 		D1F5E2A120E3CBCF002394DE /* wechat_restore */ = {
 			isa = PBXGroup;
 			children = (
+				D1DF33AB20F1D12F00E2C7BA /* ContatctViewController.h */,
+				D1DF33A920F1D12F00E2C7BA /* ContatctViewController.m */,
+				D1DF33A720F1D12F00E2C7BA /* MainViewController.h */,
+				D1DF33AA20F1D12F00E2C7BA /* MainViewController.m */,
+				D1DF33A820F1D12F00E2C7BA /* RecordViewController.h */,
+				D1DF33A620F1D12F00E2C7BA /* RecordViewController.m */,
 				D1F5E2A220E3CBCF002394DE /* AppDelegate.h */,
 				D1F5E2A320E3CBCF002394DE /* AppDelegate.mm */,
 				D1F5E2A520E3CBCF002394DE /* ViewController.h */,
@@ -717,6 +732,7 @@
 				D1F5E3A020E3CC2A002394DE /* SKP_Silk_resampler_rom_arm.S in Sources */,
 				D1F5E38F20E3CC2A002394DE /* SKP_Silk_resampler_private_up4.c in Sources */,
 				D1F5E3C620E3CC2A002394DE /* SKP_Silk_log2lin.c in Sources */,
+				D1DF33AE20F1D13000E2C7BA /* MainViewController.m in Sources */,
 				D1F5E37D20E3CC2A002394DE /* SKP_Silk_range_coder.c in Sources */,
 				D1F5E39220E3CC2A002394DE /* SKP_Silk_tables_NLSF_CB0_10.c in Sources */,
 				D1F5E39C20E3CC2A002394DE /* SKP_Silk_tables_pulses_per_block.c in Sources */,
@@ -728,6 +744,7 @@
 				D1F5E3AB20E3CC2A002394DE /* SKP_Silk_encode_frame_FIX.c in Sources */,
 				D1F5E39020E3CC2A002394DE /* SKP_Silk_NLSF2A.c in Sources */,
 				D1F5E3B020E3CC2A002394DE /* SKP_Silk_NLSF_MSVQ_encode_FIX.c in Sources */,
+				D1DF33AD20F1D13000E2C7BA /* ContatctViewController.m in Sources */,
 				D1F5E39F20E3CC2A002394DE /* SKP_Silk_lin2log_arm.S in Sources */,
 				D1F5E36420E3CC2A002394DE /* SKP_Silk_quant_LTP_gains_FIX.c in Sources */,
 				D1F5E36220E3CC2A002394DE /* SKP_Silk_find_pred_coefs_FIX.c in Sources */,
@@ -781,6 +798,7 @@
 				D1F5E3C220E3CC2A002394DE /* SKP_Silk_LTP_analysis_filter_FIX.c in Sources */,
 				D1F5E36020E3CC2A002394DE /* SKP_Silk_tables_type_offset.c in Sources */,
 				D1F5E37020E3CC2A002394DE /* SKP_Silk_residual_energy16_FIX.c in Sources */,
+				D1DF33AC20F1D13000E2C7BA /* RecordViewController.m in Sources */,
 				D1F5E3BA20E3CC2A002394DE /* SKP_Silk_ana_filt_bank_1.c in Sources */,
 				D1F5E3CE20E3CC2A002394DE /* SKP_Silk_enc_API.c in Sources */,
 				D1F5E37E20E3CC2A002394DE /* SKP_Silk_control_codec_FIX.c in Sources */,
