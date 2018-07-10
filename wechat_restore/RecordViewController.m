@@ -12,6 +12,7 @@
 #import "PCMPlayer.h"
 #import "DBManager.h"
 #import "NSString+NSString_MD5.h"
+#import "GDataXMLNode.h"
 
 
 #define MM_SQLITE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/MM.sqlite"
@@ -87,7 +88,7 @@
     
     NSString *message_content = [dict valueForKey:@"Message"];
     
-    NSLog(@"%@",message_content);
+   // NSLog(@"%@",message_content);
 
 
     
@@ -99,11 +100,58 @@
         dispatch_async(dispatch_get_main_queue(), ^{
             [_player playWithPath:(char *)[src UTF8String] info:1 API_Fs_Hz:8000];
         });
+    } else if ([type isEqualToString:@"49"] || [type isEqualToString:@"3"] || [type isEqualToString:@"50"]  ) {
+        GDataXMLDocument *document = [[GDataXMLDocument alloc] initWithXMLString:message_content error:nil];
+        GDataXMLElement *elements = [document rootElement];
+        
+        parseXMLElement(elements,0);
+        
+       
+        
+    } else if ([type isEqualToString:@"10000"]) {
+        GDataXMLDocument * document = [[GDataXMLDocument alloc] initWithHTMLString:message_content error:nil];
+        GDataXMLElement *elements = [document rootElement];
+        parseXMLElement(elements,0);
+
+        
     }
     
    // NSLog(@"%@",self.dataArray[table.selectedRow]);
 }
 
+
+void parseXMLElement(GDataXMLElement *elements,int re) {
+    
+    if (elements != nil) {
+        NSArray *array = [elements children];
+        for (GDataXMLElement *item in array) {
+            NSLog(@"%@:%@",[item name],[item stringValue]);
+            NSArray *adsds = [item attributes];
+            
+            for (GDataXMLNode *item2 in [item attributes]) {
+                parseXMLNode(item2);
+                
+            }
+            
+            parseXMLElement(item,0);
+        }
+    }
+    
+}
+
+
+void parseXMLNode(GDataXMLNode *node) {
+    if (node != nil) {
+        NSArray *array = [node children];
+        for (GDataXMLNode *item in array) {
+            NSLog(@"%@:%@",[item name],[item stringValue]);
+            
+          
+            parseXMLNode(item);
+        }
+    }
+    
+}
 
 - (void)encodeWithCoder:(nonnull NSCoder *)aCoder {
     
