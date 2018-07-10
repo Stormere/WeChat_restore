@@ -12,7 +12,8 @@
 #import "PCMPlayer.h"
 #import "DBManager.h"
 #import "NSString+NSString_MD5.h"
-
+#import "NSImageView+NSImageView_Exten.h"
+#import "ContactModel.h"
 #define MM_SQLITE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/MM.sqlite"
 #define WCDB_CONTACT_SQILTE_PATH @"Documents/Test/AppDomain-com.tencent.xin/Documents/ddac4abdb1c3ba52f3cd4a0a1e1013ef/DB/WCDB_Contact.sqlite"
 
@@ -90,24 +91,25 @@
     NSMutableArray *result = [[NSMutableArray alloc] init];
     
     Byte *b = (Byte *)[data bytes];
-    
+
     int index = 0;
     int length = 0;
     if(b[0] == 8) index += 2;
     while(1) {
         index++;
-        if(index >= [b length]) break;
+        if(index >= [data length]) break;
         length = b[index];
         index ++;
         if(length >= 0x80) index++;
-        if(index+length > [b length]) break;
+        if(index+length > [data length]) break;
         
-        NSString * str = [[NSString alloc] initWithData:[b subdataWithRange:NSMakeRange(index,length) encodig:NSUTF8StringEncoding]];
-        
+        NSString* str = [[NSString alloc]initWithData:[data subdataWithRange:NSMakeRange(index, length)] encoding:NSUTF8StringEncoding];
+        NSLog(@"%@",str);
         if(str != nil) [result addObject:str];
         index += length;
-        return result;
     }
+    return result;
+
 }
 
 -(void)readChatRecord{
@@ -121,14 +123,35 @@
     
     NSMutableArray *contact_result = [[DBManager sharedInstance] execQuery:"select * from Friend"  dbPath:[[NSHomeDirectory() stringByAppendingPathComponent:WCDB_CONTACT_SQILTE_PATH] UTF8String]];
     
+    
+    
     for (int i=0; i<result.count; i++) {
         NSString *table_name = [result[i]  valueForKey:@"name"];
+       
         if ([table_name hasPrefix:@"Chat"]) {
             for (int j=0; j<contact_result.count; j++) {
+                
+                
                 NSString *user_name = [contact_result[j]  valueForKey:@"userName"];
                 if ([[NSString MD5_Lower:user_name] isEqualToString:[table_name componentsSeparatedByString:@"_"][1]]) {
+                    NSData *data2 = [contact_result[j] valueForKey:@"dbContactHeadImage"];
+                    NSMutableArray *imageArray =  [self parseBinaryData:data2];
+                    
+                     NSData *data = [contact_result[j] valueForKey:@"dbContactRemark"];
+                    NSMutableArray *detail =  [self  parseBinaryData:data];
+                    
+                    ContactModel * model = [[ContactModel alloc] init];
+                    if([detail count] > 0) model.user_name = detail[0];
+                    if([imageArray count] > 0) model.head_image_url = imageArray[0];
+                    model.wxid = user_name;
+                    
+                    
+                    
+                    
                     [contact_result removeObjectAtIndex:j];
-                    [_dataArray addObject:user_name];
+                   
+                    [_dataArray addObject:model];
+
                 }
             }
         }
@@ -179,7 +202,9 @@
         cell.identifier = strIdt;
     }
     cell.wantsLayer = YES;
-    cell.textField.stringValue = [NSString stringWithFormat:@"%@",self.dataArray[row]];
+    cell.textField.stringValue = [NSString stringWithFormat:@"%@",[(ContactModel *)self.dataArray[row] user_name]];
+    [cell.imageView setImageWithURL:[(ContactModel *)self.dataArray[row] head_image_url] placeholderImage:nil];
+    //  cell.imageView.image = [NSImage imagewi]
     return cell;
 }
 //选中的响应
@@ -188,7 +213,7 @@
     
     
     if ([self.delegate respondsToSelector:@selector(refreshTableView:)]) {
-        [self.delegate performSelector:@selector(refreshTableView:) withObject:self.dataArray[table.selectedRow]];
+        [self.delegate performSelector:@selector(refreshTableView:) withObject:[(ContactModel *)self.dataArray[table.selectedRow] wxid]   ];
     }
 }
 
