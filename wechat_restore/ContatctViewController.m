@@ -86,6 +86,29 @@
     }
 }
 
+-(NSMutableArray *)parseBinaryData:(NSData *)data {
+    NSMutableArray *result = [[NSMutableArray alloc] init];
+    
+    Byte *b = (Byte *)[data bytes];
+    
+    int index = 0;
+    int length = 0;
+    if(b[0] == 8) index += 2;
+    while(1) {
+        index++;
+        if(index >= [b length]) break;
+        length = b[index];
+        index ++;
+        if(length >= 0x80) index++;
+        if(index+length > [b length]) break;
+        
+        NSString * str = [[NSString alloc] initWithData:[b subdataWithRange:NSMakeRange(index,length) encodig:NSUTF8StringEncoding]];
+        
+        if(str != nil) [result addObject:str];
+        index += length;
+        return result;
+    }
+}
 
 -(void)readChatRecord{
     
